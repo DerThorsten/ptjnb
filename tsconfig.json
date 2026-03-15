@@ -1,7 +1,5 @@
 {
   "compilerOptions": {
-    "skipLibCheck": true,         // <--- ADD THIS to ignore errors in node_modules
-    "esModuleInterop": true,      // <--- Recommended if not present
     "allowSyntheticDefaultImports": true,
     "composite": true,
     "declaration": true,
@@ -14,10 +12,11 @@
     "noEmitOnError": true,
     "noImplicitAny": true,
     "noUnusedLocals": true,
+    "outDir": "lib",
     "preserveWatchOutput": true,
     "resolveJsonModule": true,
-    "outDir": "lib",
     "rootDir": "src",
+    "skipLibCheck": true,
     "strict": true,
     "strictNullChecks": true,
     "target": "ES2018",

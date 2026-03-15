@@ -75,31 +75,35 @@ jobs:
     - name: Install and Test
       run: |
         set -eux
-        # Remove NodeJS, twice to take care of system and locally installed node versions.
         sudo rm -rf $(which node)
         sudo rm -rf $(which node)
 
         pip install "jupyterlab>=4.0.0,<5" ptjnb*.whl
 
-
         jupyter labextension list
         jupyter labextension list 2>&1 | grep -ie "ptjnb.*OK"
         python -m jupyterlab.browser_check --no-browser-test
 
-  integration-tests:
-    name: Integration tests
-    needs: build
+  build-lite:
+    name: Build JupyterLite
+    needs: test_isolated
     runs-on: ubuntu-latest
-
-    env:
-      PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/pw-browsers
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Base Setup
-      uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+    - name: Install Conda environment with Micromamba
+      uses: mamba-org/setup-micromamba@v1
+      with:
+        micromamba-version: '1.5.5-0'
+        environment-name: build-env
+        create-args: >-
+          python=3.10
+          pip=24.0
+          jupyterlab
+          jupyterlite-core
+          jupyterlite-xeus>=4.4.0
 
     - name: Download extension package
       uses: actions/download-artifact@v4
@@ -107,44 +111,89 @@ jobs:
         name: extension-artifacts
 
     - name: Install the extension
+      shell: bash -l {0}
       run: |
         set -eux
-        python -m pip install "jupyterlab>=4.0.0,<5" ptjnb*.whl
+        mkdir dist
+        mv ptjnb*.whl dist/ptjnb-0.0.0-py3-none-any.whl
+        python -m pip install dist/ptjnb*.whl
 
-    - name: Install dependencies
-      working-directory: ui-tests
-      env:
-        YARN_ENABLE_IMMUTABLE_INSTALLS: 0
-        PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      run: jlpm install
+    - name: Build the lite site
+      shell: bash -l {0}
+      working-directory: demo
+      run: |
+        set -eux
+        jupyter lite build .
 
-    - name: Set up browser cache
-      uses: actions/cache@v4
+    - name: Upload artifact
+      if: github.ref == 'refs/heads/main'
+      uses: actions/upload-pages-artifact@v3
       with:
-        path: |
-          ${{ github.workspace }}/pw-browsers
-        key: ${{ runner.os }}-${{ hashFiles('ui-tests/yarn.lock') }}
+        path: ./demo/_output
+        retention-days: 30
 
-    - name: Install browser
+    - name: Upload artifact for PR
+      if: github.event_name == 'pull_request'
+      uses: actions/upload-artifact@v4
+      with:
+        name: jupyterlite-build-asset
+        path: ./demo/_output
+
+  ui-tests-lite:
+    name: UI tests (JupyterLite)
+    needs: build-lite
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/download-artifact@v4
+      with:
+        name: jupyterlite-build-asset
+        path: ./demo/_output
+
+    - name: Serve JupyterLite
       run: |
         set -eux
-        jlpm playwright install-deps
-        jlpm playwright install chromium
-      working-directory: ui-tests
+        python -m http.server 4477 --directory ./demo/_output &
 
-    - name: Execute integration tests
-      working-directory: ui-tests
+    - name: Base Setup
+      uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+
+    - name: Run UI tests
+      working-directory: ./ui-tests
       run: |
+        set -eux
+        jlpm install
+        jlpm playwright install chromium
         jlpm playwright test
 
-    - name: Upload Playwright Test report
+    - name: Upload Playwright report
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: ptjnb-playwright-tests
+        name: ptjnb-lite-playwright-tests
         path: |
           ui-tests/test-results
           ui-tests/playwright-report
+
+  deploy:
+    needs: build-lite
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
 
   check_links:
     name: Check Links

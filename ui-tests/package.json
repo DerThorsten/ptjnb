@@ -1,15 +1,11 @@
 {
-  "name": "ptjnb-ui-tests",
+  "name": "ptjnb-ui-test",
   "version": "1.0.0",
-  "description": "JupyterLab ptjnb Integration Tests",
   "private": true,
   "scripts": {
-    "start": "jupyter lab --config jupyter_server_test_config.py",
-    "test": "jlpm playwright test",
-    "test:update": "jlpm playwright test --update-snapshots"
+    "test": "npx playwright test"
   },
   "devDependencies": {
-    "@jupyterlab/galata": "^5.0.5",
-    "@playwright/test": "^1.37.0"
+    "@playwright/test": "^1.50.1"
   }
 }

@@ -1,14 +1,21 @@
-/**
- * Configuration for Playwright using default from @jupyterlab/galata
- */
-const baseConfig = require('@jupyterlab/galata/lib/playwright-config');
+import { defineConfig } from '@playwright/test';
 
-module.exports = {
-  ...baseConfig,
-  webServer: {
-    command: 'jlpm start',
-    url: 'http://localhost:8888/lab',
-    timeout: 120 * 1000,
-    reuseExistingServer: !process.env.CI
+export default defineConfig({
+  testDir: './tests',
+  fullyParallel: false,
+  workers: 1,
+  forbidOnly: !!process.env.CI,
+  retries: 0,
+  timeout: 120 * 1000,
+  reporter: [['html', { open: 'never' }]],
+  use: {
+    baseURL: 'http://127.0.0.1:4477',
+    trace: 'off',
+    video: 'retain-on-failure'
+  },
+  expect: {
+    toHaveScreenshot: {
+      maxDiffPixels: 100
+    }
   }
-};
+});
