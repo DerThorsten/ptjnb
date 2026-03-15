@@ -13,4 +13,3 @@ project_short_description: A JupyterLab extension to convert plaintext files to 
 python_name: ptjnb
 repository: https://github.com/DerThorsten/ptjnb
 test: true
-
