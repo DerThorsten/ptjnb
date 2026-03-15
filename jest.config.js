@@ -6,6 +6,7 @@ const esModules = [
   '@jupyterlab/',
   'lib0',
   'nanoid',
+  'plainb',
   'vscode-ws-jsonrpc',
   'y-protocols',
   'y-websocket',

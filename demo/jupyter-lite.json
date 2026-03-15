@@ -1,0 +1,14 @@
+{
+  "jupyter-config-data": {
+    "enableMemoryStorage": true,
+    "contentsStorageDrivers": ["memoryStorageDriver"],
+    "plainTextNotebookConfig": {
+      "rules": [
+        { "dir": "percent", "parser": "parsePy" },
+        { "dir": "sphinx_gallery", "parser": "parseSphinxGallery" },
+        { "dir": "markdown", "parser": "parseClassicMd" },
+        { "dir": "myst", "parser": "parseMystMd" }
+      ]
+    }
+  }
+}

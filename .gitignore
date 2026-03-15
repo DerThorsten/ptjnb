@@ -126,3 +126,7 @@ dmypy.json
 
 # Yarn cache
 .yarn/
+
+demo/_output
+demo/.jupyterlite.doit.db
+junit.xml
