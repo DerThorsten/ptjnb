@@ -71,7 +71,6 @@ import matplotlib.pyplot as plt
 from skimage import data
 from skimage.transform import swirl
 
-
 image = data.checkerboard()
 swirled = swirl(image, rotation=0, strength=10, radius=120)
 
