@@ -2,6 +2,12 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.2.3
+
+No merged PRs
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.2.2
 
 ([Full Changelog](https://github.com/notebook-link/jupyter-plainb/compare/v0.2.1...71978b79978cef54f027c3e47687f1bf70aff740))
@@ -18,8 +24,6 @@ See [our definition of contributors](https://github-activity.readthedocs.io/en/l
 ([GitHub contributors page for this release](https://github.com/notebook-link/jupyter-plainb/graphs/contributors?from=2026-06-12&to=2026-06-15&type=c))
 
 @Yahiewi ([activity](https://github.com/search?q=repo%3Anotebook-link%2Fjupyter-plainb+involves%3AYahiewi+updated%3A2026-06-12..2026-06-15&type=Issues))
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.2.1
 
